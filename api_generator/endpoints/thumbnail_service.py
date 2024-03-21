@@ -19,8 +19,8 @@ async def analyze_image_route(file: UploadFile = File(...)):
     image_info = analyze_image(contents)
     path_s3 = upload_image_to_s3(
         file_contents=contents,
-        bucket_name="images",
-        folder_name="original",
+        bucket_name="images-thumbnail-generator",
+        folder_name="originals",
         filename=filename
     )
     image_info["path_saved"] = path_s3
@@ -69,7 +69,7 @@ async def metrics_thumbnail(
 
     path_s3 = upload_image_to_s3(
         file_contents=contents,
-        bucket_name="images",
+        bucket_name="images-thumbnail-generator",
         folder_name="thumbnails",
         filename=filename
     )
@@ -77,7 +77,8 @@ async def metrics_thumbnail(
     # Return the thumbnail as response
     return {
         "ssi_score": metrics[0],
-        "psnr_score": metrics[1]
+        "psnr_score": metrics[1],
+        "path_saved": path_s3
     }
 
 
@@ -88,12 +89,12 @@ async def metrics_thumbnail_v2(
     ):
     # Read the uploaded image
     contents = await file.read()
-
+    filename = file.filename
     _, metrics = thumbnail_based_rr(contents, reduction_ratio)
 
     path_s3 = upload_image_to_s3(
         file_contents=contents,
-        bucket_name="images",
+        bucket_name="images-thumbnail-generator",
         folder_name="thumbnails",
         filename=filename
     )
