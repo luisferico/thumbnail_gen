@@ -7,7 +7,7 @@ from utils import set_background
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 temp_dir = os.path.join(current_dir, "temp")
-api_url = "thumbnail-load-balancer-318738320.us-east-1.elb.amazonaws.com:8000/"
+api_url = "http://thumbnail-load-balancer-318738320.us-east-1.elb.amazonaws.com:8000/"
 set_background("./bg/background.jpg")
 
 # Title of the application

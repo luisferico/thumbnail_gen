@@ -1,15 +1,12 @@
-resource "aws_key_pair" "example" {
-  key_name   = var.key_name
-  public_key = file("~/.ssh/id_rsa.pub")
-}
-
-
 resource "aws_instance" "streamlit-server" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.ec2.id]
   subnet_id              = element(aws_subnet.public.*.id, 1)
 
+  root_block_device {
+    volume_size = 20
+  }
 #  connection {
 #    type        = "ssh"
 #    user        = "ubuntu"  # Replace with the appropriate username for your EC2 instance
