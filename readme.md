@@ -19,7 +19,7 @@ This guide provides step-by-step instructions for deploying the API, infrastruct
 Docker Containerization
 1. Clone the api_generator repository:
 ```bash
-git clone https://github.com/your_username/api_generator.git
+git clone https://github.com/luisferico/thumbnail_gen.git
 ```
 
 2. Navigate to the cloned repository:
@@ -75,13 +75,13 @@ Note: It's necessary to access the EC2 instance created previously to execute th
 1. Clone the streamlit_app repository:
 
 ```bash
-git clone https://github.com/your_username/streamlit_app.git
+git clone https://github.com/luisferico/thumbnail_gen.git
 ```
 
 2. Navigate to the streamlit_app directory:
 
 ```bash
-cd streamlit_app
+cd thumbnail_gen/streamlit_app
 ```
 3. Install the required dependencies:
 
