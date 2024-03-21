@@ -1,7 +1,11 @@
+import io
 import cv2
-import numpy as np
-from skimage.metrics import structural_similarity, peak_signal_noise_ratio
+import boto3
 import piexif
+import numpy as np
+from datetime import datetime
+from skimage.metrics import structural_similarity, peak_signal_noise_ratio
+
 
 def thumbnail_based_wh(file_contents: bytes, width: int, height: int):
     """
@@ -119,3 +123,30 @@ def calculate_image_metrics(original_image, reduced_image):
     psnr_score = peak_signal_noise_ratio(original_image, reduced_image)
 
     return ssi_score, psnr_score
+
+
+def upload_image_to_s3(file_contents, bucket_name, folder_name, filename):
+    """
+    Uploads an image to an S3 bucket.
+
+    Args:
+        file_contents (bytes): The bytes of the image file.
+        bucket_name (str): The name of the S3 bucket.
+        folder_name (str): The name of the folder in the bucket where the image will be stored.
+
+    Returns:
+        str: The S3 path to the uploaded image.
+    """
+    # Save the image to a temporary buffer
+    buffer = io.BytesIO(file_contents)
+    buffer.seek(0)
+    today = datetime.today()
+    # Define the key/name for the object in S3
+    key = f'{folder_name}/{today.year}-{today.month}-{today.day}/image-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}-{filename}'
+
+    # Upload the image to S3
+    s3 = boto3.client('s3')
+    s3.upload_fileobj(buffer, bucket_name, key)
+
+    # Return the S3 path to the uploaded image
+    return f's3://{bucket_name}/{key}'

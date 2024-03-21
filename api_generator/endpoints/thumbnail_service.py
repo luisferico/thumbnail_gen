@@ -1,6 +1,6 @@
 from fastapi import File, UploadFile, Query, APIRouter
 from fastapi.responses import FileResponse, JSONResponse
-from .image_functions import thumbnail_based_wh, thumbnail_based_rr, analyze_image
+from .image_functions import thumbnail_based_wh, thumbnail_based_rr, analyze_image, upload_image_to_s3
 
 import logging
 
@@ -14,10 +14,16 @@ router = APIRouter()
 async def analyze_image_route(file: UploadFile = File(...)):
     # Read the uploaded image
     contents = await file.read()
-
+    filename = file.filename
     # Analyze the image
     image_info = analyze_image(contents)
-
+    path_s3 = upload_image_to_s3(
+        file_contents=contents,
+        bucket_name="images",
+        folder_name="original",
+        filename=filename
+    )
+    image_info["path_saved"] = path_s3
     return image_info
 
 
@@ -58,8 +64,15 @@ async def metrics_thumbnail(
     ):
     # Read the uploaded image
     contents = await file.read()
-
+    filename = file.filename
     _, metrics = thumbnail_based_wh(contents, width, height)
+
+    path_s3 = upload_image_to_s3(
+        file_contents=contents,
+        bucket_name="images",
+        folder_name="thumbnails",
+        filename=filename
+    )
 
     # Return the thumbnail as response
     return {
@@ -78,8 +91,16 @@ async def metrics_thumbnail_v2(
 
     _, metrics = thumbnail_based_rr(contents, reduction_ratio)
 
+    path_s3 = upload_image_to_s3(
+        file_contents=contents,
+        bucket_name="images",
+        folder_name="thumbnails",
+        filename=filename
+    )
+
     # Return the thumbnail as response
     return {
         "ssi_score": metrics[0],
-        "psnr_score": metrics[1]
+        "psnr_score": metrics[1],
+        "path_saved": path_s3
     }

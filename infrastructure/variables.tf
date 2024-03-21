@@ -34,12 +34,12 @@ variable "app_port" {
 
 variable "app_port_streamlit" {
     description = "Port exposed by the docker image streamlit to redirect traffic to"
-    default = 8501
+    default = 80
 }
 
 variable "app_count" {
     description = "Number of docker containers to run"
-    default = 3
+    default = 2
 }
 
 variable "health_check_path" {
@@ -57,7 +57,7 @@ variable "fargate_memory" {
 }
 
 variable "ami_id" {
-    default = "ami-053b0d53c279acc90"
+    default = "ami-0f8b8f874036055b1"
 }
 
 variable "instance_type" {

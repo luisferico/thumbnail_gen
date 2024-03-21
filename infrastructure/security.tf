@@ -13,13 +13,6 @@ resource "aws_security_group" "lb" {
         cidr_blocks = ["0.0.0.0/0"]
     }
 
-    ingress {
-        protocol    = "tcp"
-        from_port   = var.app_port_streamlit
-        to_port     = var.app_port_streamlit
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
     egress {
         protocol    = "-1"
         from_port   = 0
@@ -41,11 +34,31 @@ resource "aws_security_group" "ecs_tasks" {
         security_groups = [aws_security_group.lb.id]
     }
 
-    ingress {
-        protocol    = "tcp"
-        from_port   = var.app_port_streamlit
-        to_port     = var.app_port_streamlit
+    egress {
+        protocol    = "-1"
+        from_port   = 0
+        to_port     = 0
         cidr_blocks = ["0.0.0.0/0"]
+    }
+}
+
+resource "aws_security_group" "ec2" {
+    name        = "ec2-security-group"
+    description = "allow inbound access from the ec2 only"
+    vpc_id      = aws_vpc.thumbnail.id
+
+    ingress {
+        protocol        = "tcp"
+        from_port       = 22
+        to_port         = 22
+        cidr_blocks     = ["0.0.0.0/0"]
+    }
+
+    ingress {
+        protocol        = "tcp"
+        from_port       = var.app_port_streamlit
+        to_port         = var.app_port_streamlit
+        cidr_blocks     = ["0.0.0.0/0"]
     }
 
     egress {
